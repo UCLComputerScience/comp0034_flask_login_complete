@@ -57,6 +57,8 @@ def signup():
         try:
             db.session.add(user)
             db.session.commit()
+            # The following code shows how to create a cookie. You do not need to create a cookie if you use Flask-Login.
+            # If you are using Flask login you could instead just return redirect(url_for('main.index'))
             response = make_response(redirect(url_for('main.index')))
             response.set_cookie("name", form.name.data)
             return response
@@ -76,7 +78,7 @@ def login():
             flash('Invalid username or password')
             return redirect(url_for('auth.login'))
         login_user(user, remember=form.remember_me.data, duration=timedelta(minutes=1))
-        flash('Logged in successfully. {}'.format(user.name))
+        flash('{} logged in successfully'.format(user.name))
         next = request.args.get('next')
         if not is_safe_url(next):
             return abort(400)
@@ -84,7 +86,7 @@ def login():
     return render_template('login.html', form=form)
 
 
-@bp_auth.route('/logout')
+@bp_auth.route('/logout/')
 @login_required
 def logout():
     logout_user()
